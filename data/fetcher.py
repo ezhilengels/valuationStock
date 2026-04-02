@@ -227,15 +227,16 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
     data["eps_growth_5y"]   = _cagr(data["net_profit_5y"])
     data["dps_growth_5y"]   = _dividend_growth(ticker)
 
-    equity_latest = _latest(data["equity_5y"])
+    equity_latest = _latest(data.get("equity_5y", []))
+    td_val = data.get("total_debt")
     data["debt_equity"] = (
-        (data["total_debt"] / equity_latest)
-        if equity_latest and equity_latest > 0 else None
+        (td_val / equity_latest)
+        if td_val is not None and equity_latest and equity_latest > 0 else 0.0
     )
 
-    ie = data["interest_exp_ttm"]
-    eb = data["ebit_ttm"]
-    data["interest_coverage"] = (eb / ie) if ie and ie > 0 and eb else None
+    ie = data.get("interest_exp_ttm")
+    eb = data.get("ebit_ttm")
+    data["interest_coverage"] = (eb / ie) if ie and ie > 0 and eb is not None else 999
 
     ca_val = _latest(data["current_assets"])
     cl_val = _latest(data["current_liab"])

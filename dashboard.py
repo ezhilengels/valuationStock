@@ -762,6 +762,7 @@ elif page == "🔍 Batch Scanner":
         filter_key = FILTER_MAP[filter_opt]
 
         results    = []
+        failed_tickers = []
         progress   = st.progress(0, text="Initialising scanner...")
         status_box = st.empty()
         total      = len(tickers_preview)
@@ -770,13 +771,21 @@ elif page == "🔍 Batch Scanner":
             status_box.caption(f"Scanning {ticker} ({i+1}/{total})...")
             progress.progress((i + 1) / total,
                               text=f"Scanning {ticker} ({i+1}/{total})")
-            result = run_valuation(ticker)
-            if result:
-                results.append(result)
+            try:
+                result = run_valuation(ticker)
+                if result:
+                    results.append(result)
+            except Exception as e:
+                failed_tickers.append(f"{ticker}: {str(e)}")
             time.sleep(delay)
 
         progress.empty()
         status_box.empty()
+
+        if failed_tickers:
+            with st.expander(f"⚠️ {len(failed_tickers)} stocks skipped due to errors"):
+                for f in failed_tickers:
+                    st.write(f"• {f}")
 
         # Filter
         if filter_key == "buy":
