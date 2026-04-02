@@ -106,20 +106,7 @@ def detect(data: dict) -> dict:
             )
         )
 
-    # ── Rule 2: BANK / NBFC ────────────────────────────────────────────────
-    if any(s.lower() in sector.lower() for s in BANKING_SECTORS) or \
-       any(s.lower() in industry.lower() for s in BANKING_SECTORS):
-        return _result(
-            stock_type    = BANK_NBFC,
-            reason        = f"Financial sector: {sector}",
-            models_to_use = ["excess_returns", "epv", "relative"],
-            models_to_skip= ["dcf", "ev_ebitda", "lynch", "mid_cycle",
-                              "buffett", "ev_sales", "nav", "price_tam"],
-            weights       = {"excess_returns": 0.6, "epv": 0.4},
-            warning       = None
-        )
-
-    # ── Rule 3: PSU ────────────────────────────────────────────────────────
+    # ── Rule 2: PSU ────────────────────────────────────────────────────────
     if is_psu or any(k.upper() in name for k in PSU_KEYWORDS):
         return _result(
             stock_type    = PSU,
@@ -131,6 +118,19 @@ def detect(data: dict) -> dict:
             warning       = (
                 "ℹ PSU: Using 3Y average dividend for DDM (PSU payouts vary)"
             )
+        )
+
+    # ── Rule 3: BANK / NBFC ────────────────────────────────────────────────
+    if any(s.lower() in sector.lower() for s in BANKING_SECTORS) or \
+       any(s.lower() in industry.lower() for s in BANKING_SECTORS):
+        return _result(
+            stock_type    = BANK_NBFC,
+            reason        = f"Financial sector: {sector}",
+            models_to_use = ["excess_returns", "epv", "relative"],
+            models_to_skip= ["dcf", "ev_ebitda", "lynch", "mid_cycle",
+                              "buffett", "ev_sales", "nav", "price_tam"],
+            weights       = {"excess_returns": 0.6, "epv": 0.4},
+            warning       = None
         )
 
     # ── Rule 4: CYCLICAL — Steel, Cement, Metals, Chemicals ───────────────

@@ -61,7 +61,10 @@ BANKING_SECTORS = [
 ]
 PSU_KEYWORDS = [
     "Coal India", "ONGC", "NTPC", "Power Grid", "BHEL",
-    "SAIL", "GAIL", "Oil India", "NMDC", "NALCO"
+    "SAIL", "GAIL", "Oil India", "NMDC", "NALCO",
+    "STATE BANK", "SBI", "PUNJAB NATIONAL BANK", "PNB",
+    "BANK OF BARODA", "CANARA BANK", "UNION BANK",
+    "INDIAN BANK", "UCO BANK"
 ]
 IT_SECTORS = [
     "Technology", "Information Technology", "Software", "IT Services"

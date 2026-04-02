@@ -51,12 +51,28 @@ def calculate(data: dict) -> dict:
         return _invalid("Net Profit is negative — Owner Earnings not applicable")
 
     # ── Owner Earnings ──────────────────────────────────────────────────────
-    maintenance_capex = capex * MAINTENANCE_CAPEX_RATIO
-    owner_earnings    = net_profit + depreciation - maintenance_capex
+    # Buffett's Rule: Maintenance Capex is the expense required to maintain unit volume.
+    # Technical Heuristic:
+    # 1. If Total Capex < Depreciation, use Total Capex as maintenance (likely asset-light).
+    # 2. If Total Capex > Depreciation, use Depreciation as a safe floor for maintenance.
+    # 3. Fallback: If no depreciation data, use 60% rule.
+    
+    if depreciation and capex:
+        maintenance_capex = min(capex, depreciation)
+        maint_method = "Min(Capex, Depr)"
+    elif capex:
+        maintenance_capex = capex * MAINTENANCE_CAPEX_RATIO
+        maint_method = f"{MAINTENANCE_CAPEX_RATIO*100:.0f}% of Capex"
+    else:
+        # No capex data — assume maintenance is roughly depreciation or 0
+        maintenance_capex = depreciation
+        maint_method = "Full Depreciation"
+
+    owner_earnings = net_profit + depreciation - maintenance_capex
 
     if owner_earnings <= 0:
         return _invalid(
-            "Owner Earnings negative after maintenance capex deduction "
+            f"Owner Earnings negative after {maint_method} deduction "
             "(very capital-intensive business)"
         )
 

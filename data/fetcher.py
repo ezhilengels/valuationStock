@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 import sys
 import os
+from typing import Union, List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import NSE_SUFFIX
@@ -36,6 +37,28 @@ def _get_screener():
 # PUBLIC API
 # =============================================================================
 
+def fetch_gsec_yield() -> float:
+    """
+    Fetch the live India 10-year G-Sec yield from yfinance (^IN10Y).
+    Returns yield as a decimal (e.g. 0.0712 for 7.12%).
+    Falls back to the config default if fetch fails.
+    """
+    try:
+        ticker = yf.Ticker("^IN10Y")
+        data = ticker.history(period="1d")
+        if not data.empty:
+            val = float(data["Close"].iloc[-1])
+            # If yfinance returns it as 7.12, convert to 0.0712
+            if val > 1.0:
+                return val / 100.0
+            return val
+    except Exception:
+        pass
+    
+    # Fallback to a safe Indian average if API fails
+    return 0.070
+
+
 def get_ticker(symbol: str):
     """Return yfinance Ticker object. Appends .NS if not present."""
     symbol = symbol.upper().strip()
@@ -45,7 +68,7 @@ def get_ticker(symbol: str):
 
 
 def fetch_stock_data(symbol: str, use_cache: bool = True,
-                     use_screener: bool = True) -> dict | None:
+                     use_screener: bool = True) -> Union[dict, None]:
     """
     Master fetch function. Returns a dict with ALL data needed
     for every valuation model.
@@ -337,7 +360,7 @@ def _latest(series: list):
     return None
 
 
-def _cagr(series: list) -> float | None:
+def _cagr(series: list) -> Union[float, None]:
     """Compute CAGR from a list of values (newest first)."""
     vals = [v for v in series if v is not None and v != 0]
     if len(vals) < 2:
@@ -372,7 +395,7 @@ def _compute_margins(numerator: list, denominator: list) -> list:
     return margins
 
 
-def _dividend_growth(ticker: yf.Ticker) -> float | None:
+def _dividend_growth(ticker: yf.Ticker) -> Union[float, None]:
     """Compute 5Y dividend CAGR from dividend history."""
     try:
         hist = ticker.dividends
@@ -407,7 +430,7 @@ def _compute_tax_rate(financials: pd.DataFrame) -> float:
     return 0.25   # Default: 25% India corporate tax rate
 
 
-def _std_pct(series: list) -> float | None:
+def _std_pct(series: list) -> Union[float, None]:
     """Coefficient of variation (std / mean) for cyclical detection."""
     vals = [v for v in series if v is not None and v > 0]
     if len(vals) < 3:

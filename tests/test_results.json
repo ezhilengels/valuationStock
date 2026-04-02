@@ -1,35 +1,668 @@
 [
   {
-    "symbol": "INFY",
-    "success": false,
-    "passed": [],
-    "failed": [
-      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
-      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    "symbol": "HINDUNILVR",
+    "success": true,
+    "passed": [
+      "Fetch OK (4.3s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b92,065",
+      "Symbol: HINDUNILVR.NS",
+      "Sector: Consumer Defensive",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Consumer Defensive)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (85/100)",
+      "  DCF: IV=\u20b9701",
+      "  DDM: IV=\u20b9960",
+      "  Graham: IV=\u20b9567",
+      "  EPV: IV=\u20b9391",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9721 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -186.5%"
     ],
+    "failed": [],
     "warnings": [],
-    "data": {}
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 2065.3,
+      "iv": 720.9,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (85/100)",
+      "discount": "-186.5%"
+    }
+  },
+  {
+    "symbol": "NESTLEIND",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.5s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,191",
+      "Symbol: NESTLEIND.NS",
+      "Sector: Consumer Defensive",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Consumer Defensive)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (95/100)",
+      "  DCF: IV=\u20b9314",
+      "  DDM: IV=\u20b9427",
+      "  Graham: IV=\u20b9580",
+      "  EPV: IV=\u20b9111",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9381 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -212.9%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 1191.3,
+      "iv": 380.67,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (95/100)",
+      "discount": "-212.9%"
+    }
+  },
+  {
+    "symbol": "ITC",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.8s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9293",
+      "Symbol: ITC.NS",
+      "Sector: Consumer Defensive",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Consumer Defensive)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (95/100)",
+      "  DCF: IV=\u20b9747",
+      "  DDM: IV=\u20b9320",
+      "  Graham: IV=\u20b9733",
+      "  EPV: IV=\u20b9131",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9554 (HIGH)",
+      "Verdict: STRONG BUY",
+      "Discount: +47.2%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 292.85,
+      "iv": 554.46,
+      "verdict": "STRONG BUY",
+      "quality": "STRONG PASS (95/100)",
+      "discount": "+47.2%"
+    }
+  },
+  {
+    "symbol": "INFY",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.9s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,301",
+      "Symbol: INFY.NS",
+      "Sector: Technology",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Technology)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (80/100)",
+      "  DCF: IV=\u20b910",
+      "  DDM: IV=\u20b91,005",
+      "  Graham: IV=\u20b9585",
+      "  EPV: IV=\u20b97",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9423 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -207.4%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type HIGH_GROWTH, got LARGE_STABLE \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 1300.8,
+      "iv": 423.14,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (80/100)",
+      "discount": "-207.4%"
+    }
+  },
+  {
+    "symbol": "TCS",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.5s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b92,451",
+      "Symbol: TCS.NS",
+      "Sector: Technology",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Technology)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (100/100)",
+      "  DCF: IV=\u20b91,949",
+      "  DDM: IV=\u20b91,407",
+      "  Graham: IV=\u20b92,066",
+      "  EPV: IV=\u20b91,067",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b91,721 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -42.4%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type HIGH_GROWTH, got LARGE_STABLE \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 2450.7,
+      "iv": 1721.49,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (100/100)",
+      "discount": "-42.4%"
+    }
+  },
+  {
+    "symbol": "HCLTECH",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.6s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,402",
+      "Symbol: HCLTECH.NS",
+      "Sector: Technology",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Technology)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (100/100)",
+      "  DCF: IV=\u20b91,240",
+      "  DDM: IV=\u20b91,206",
+      "  Graham: IV=\u20b9996",
+      "  EPV: IV=\u20b9508",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b91,108 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -26.5%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type HIGH_GROWTH, got LARGE_STABLE \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 1402.2,
+      "iv": 1108.06,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (100/100)",
+      "discount": "-26.5%"
+    }
+  },
+  {
+    "symbol": "SUNPHARMA",
+    "success": true,
+    "passed": [
+      "Fetch OK (6.0s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,694",
+      "Symbol: SUNPHARMA.NS",
+      "Sector: Healthcare",
+      "Detector: HIGH_GROWTH (High-growth Healthcare: EPS CAGR 49.5%)",
+      "Models assigned: dcf, lynch, graham, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (100/100)",
+      "  DCF: IV=\u20b92,595",
+      "  Lynch: IV=\u20b91,136",
+      "  Graham: IV=\u20b92,273",
+      "All 3 models ran without crash",
+      "Aggregator: Weighted IV \u20b92,093 (HIGH)",
+      "Verdict: BUY",
+      "Discount: +19.1%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "HIGH_GROWTH",
+      "cmp": 1693.6,
+      "iv": 2093.1,
+      "verdict": "BUY",
+      "quality": "STRONG PASS (100/100)",
+      "discount": "+19.1%"
+    }
+  },
+  {
+    "symbol": "DIVISLAB",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.8s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b95,856",
+      "Symbol: DIVISLAB.NS",
+      "Sector: Healthcare",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Healthcare)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (65/100)",
+      "  DCF: IV=\u20b9233",
+      "  DDM: IV=\u20b9670",
+      "  Graham: IV=\u20b91,085",
+      "  EPV: IV=\u20b9601",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9571 (HIGH)",
+      "Verdict: AVOID",
+      "Discount: -924.9%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type HIGH_GROWTH, got LARGE_STABLE \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 5856.5,
+      "iv": 571.42,
+      "verdict": "AVOID",
+      "quality": "PASS (65/100)",
+      "discount": "-924.9%"
+    }
   },
   {
     "symbol": "HDFCBANK",
-    "success": false,
-    "passed": [],
-    "failed": [
-      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
-      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    "success": true,
+    "passed": [
+      "Fetch OK (2.8s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9751",
+      "Symbol: HDFCBANK.NS",
+      "Sector: Financial Services",
+      "Detector: BANK_NBFC (Financial sector: Financial Services)",
+      "Models assigned: excess_returns, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (82/100)",
+      "  ExcessReturns: IV=\u20b9770",
+      "  EPV: skipped (EBIT data unavailable \u2014 EPV cannot be computed)",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b9770 (LOW \u2014 only 1 model available)",
+      "Verdict: HOLD",
+      "Discount: +2.5%"
     ],
+    "failed": [],
     "warnings": [],
-    "data": {}
+    "data": {
+      "stock_type": "BANK_NBFC",
+      "cmp": 750.9,
+      "iv": 769.82,
+      "verdict": "HOLD",
+      "quality": "STRONG PASS (82/100)",
+      "discount": "+2.5%"
+    }
+  },
+  {
+    "symbol": "ICICIBANK",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.7s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,216",
+      "Symbol: ICICIBANK.NS",
+      "Sector: Financial Services",
+      "Detector: BANK_NBFC (Financial sector: Financial Services)",
+      "Models assigned: excess_returns, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (93/100)",
+      "  ExcessReturns: IV=\u20b92,276",
+      "  EPV: skipped (EBIT data unavailable \u2014 EPV cannot be computed)",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b92,276 (LOW \u2014 only 1 model available)",
+      "Verdict: STRONG BUY",
+      "Discount: +46.6%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "BANK_NBFC",
+      "cmp": 1215.8,
+      "iv": 2275.82,
+      "verdict": "STRONG BUY",
+      "quality": "STRONG PASS (93/100)",
+      "discount": "+46.6%"
+    }
+  },
+  {
+    "symbol": "BAJFINANCE",
+    "success": true,
+    "passed": [
+      "Fetch OK (3.0s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9827",
+      "Symbol: BAJFINANCE.NS",
+      "Sector: Financial Services",
+      "Detector: BANK_NBFC (Financial sector: Financial Services)",
+      "Models assigned: excess_returns, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (65/100)",
+      "  ExcessReturns: IV=\u20b91,003",
+      "  EPV: skipped (EBIT data unavailable \u2014 EPV cannot be computed)",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b91,003 (LOW \u2014 only 1 model available)",
+      "Verdict: BUY",
+      "Discount: +17.6%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "BANK_NBFC",
+      "cmp": 826.85,
+      "iv": 1003.36,
+      "verdict": "BUY",
+      "quality": "PASS (65/100)",
+      "discount": "+17.6%"
+    }
   },
   {
     "symbol": "COALINDIA",
-    "success": false,
-    "passed": [],
-    "failed": [
-      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
-      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    "success": true,
+    "passed": [
+      "Fetch OK (2.5s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9449",
+      "Symbol: COALINDIA.NS",
+      "Sector: Energy",
+      "Detector: PSU (Government-owned enterprise)",
+      "Models assigned: ddm, ev_ebitda, graham, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (90/100)",
+      "  DDM: IV=\u20b9232",
+      "  Graham: IV=\u20b91,889",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b9742 (MEDIUM)",
+      "Verdict: STRONG BUY",
+      "Discount: +39.5%"
     ],
+    "failed": [],
     "warnings": [],
-    "data": {}
+    "data": {
+      "stock_type": "PSU",
+      "cmp": 449.35,
+      "iv": 742.2,
+      "verdict": "STRONG BUY",
+      "quality": "STRONG PASS (90/100)",
+      "discount": "+39.5%"
+    }
+  },
+  {
+    "symbol": "NTPC",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.9s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9360",
+      "Symbol: NTPC.NS",
+      "Sector: Utilities",
+      "Detector: PSU (Government-owned enterprise)",
+      "Models assigned: ddm, ev_ebitda, graham, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (60/100)",
+      "  DDM: IV=\u20b9110",
+      "  Graham: IV=\u20b9369",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b9190 (MEDIUM)",
+      "Verdict: AVOID",
+      "Discount: -89.5%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "PSU",
+      "cmp": 359.65,
+      "iv": 189.82,
+      "verdict": "AVOID",
+      "quality": "PASS (60/100)",
+      "discount": "-89.5%"
+    }
+  },
+  {
+    "symbol": "SBIN",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.8s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,018",
+      "Symbol: SBIN.NS",
+      "Sector: Financial Services",
+      "Detector: PSU (Government-owned enterprise)",
+      "Models assigned: ddm, ev_ebitda, graham, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (60/100)",
+      "  DDM: IV=\u20b9355",
+      "  Graham: IV=\u20b93,947",
+      "All 2 models ran without crash",
+      "Aggregator: Weighted IV \u20b91,460 (MEDIUM)",
+      "Verdict: STRONG BUY",
+      "Discount: +30.3%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "PSU",
+      "cmp": 1018.4,
+      "iv": 1460.42,
+      "verdict": "STRONG BUY",
+      "quality": "PASS (60/100)",
+      "discount": "+30.3%"
+    }
+  },
+  {
+    "symbol": "TATASTEEL",
+    "success": true,
+    "passed": [
+      "Fetch OK (3.4s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9194",
+      "Symbol: TATASTEEL.NS",
+      "Sector: Basic Materials",
+      "Detector: CYCLICAL (Cyclical sector: Basic Materials)",
+      "Models assigned: mid_cycle, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PARTIAL (45/100)",
+      "  MidCycleEV: IV=\u20b9101",
+      "All 1 models ran without crash",
+      "Aggregator: Weighted IV \u20b9101 (LOW \u2014 only 1 model available)",
+      "Verdict: AVOID",
+      "Discount: -91.5%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "CYCLICAL",
+      "cmp": 194.14,
+      "iv": 101.39,
+      "verdict": "AVOID",
+      "quality": "PARTIAL (45/100)",
+      "discount": "-91.5%"
+    }
+  },
+  {
+    "symbol": "JSWSTEEL",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.6s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,141",
+      "Symbol: JSWSTEEL.NS",
+      "Sector: Basic Materials",
+      "Detector: CYCLICAL (Cyclical sector: Basic Materials)",
+      "Models assigned: mid_cycle, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: FAIL (30/100)",
+      "  MidCycleEV: IV=\u20b9238",
+      "All 1 models ran without crash",
+      "Aggregator: Weighted IV \u20b9238 (LOW \u2014 only 1 model available)",
+      "Verdict: AVOID",
+      "Discount: -379.4%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "CYCLICAL",
+      "cmp": 1141.3,
+      "iv": 238.08,
+      "verdict": "AVOID",
+      "quality": "FAIL (30/100)",
+      "discount": "-379.4%"
+    }
+  },
+  {
+    "symbol": "RELIANCE",
+    "success": true,
+    "passed": [
+      "Fetch OK (3.0s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b91,350",
+      "Symbol: RELIANCE.NS",
+      "Sector: Energy",
+      "Detector: LARGE_STABLE (Stable dividend-paying company: Energy)",
+      "Models assigned: dcf, ddm, graham, epv, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (60/100)",
+      "  DDM: skipped (Dividend yield too low (0.41%) \u2014 DDM unreliable. Company is )",
+      "  Graham: IV=\u20b9691",
+      "  EPV: IV=\u20b9376",
+      "All 4 models ran without crash",
+      "Aggregator: Weighted IV \u20b9586 (MEDIUM)",
+      "Verdict: AVOID",
+      "Discount: -130.6%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type GENERAL, got LARGE_STABLE \u2014 may need config tuning",
+      "  DCF: IV=0 (zero or negative)"
+    ],
+    "data": {
+      "stock_type": "LARGE_STABLE",
+      "cmp": 1350.5,
+      "iv": 585.75,
+      "verdict": "AVOID",
+      "quality": "PASS (60/100)",
+      "discount": "-130.6%"
+    }
+  },
+  {
+    "symbol": "TITAN",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.8s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b94,097",
+      "Symbol: TITAN.NS",
+      "Sector: Consumer Cyclical",
+      "Detector: CYCLICAL (High revenue volatility (26.1%))",
+      "Models assigned: mid_cycle, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (60/100)",
+      "  MidCycleEV: IV=\u20b9179",
+      "All 1 models ran without crash",
+      "Aggregator: Weighted IV \u20b9179 (LOW \u2014 only 1 model available)",
+      "Verdict: AVOID",
+      "Discount: -2188.2%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type GENERAL, got CYCLICAL \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "CYCLICAL",
+      "cmp": 4097.2,
+      "iv": 179.06,
+      "verdict": "AVOID",
+      "quality": "PASS (60/100)",
+      "discount": "-2188.2%"
+    }
+  },
+  {
+    "symbol": "ASIANPAINT",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.5s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b92,169",
+      "Symbol: ASIANPAINT.NS",
+      "Sector: Basic Materials",
+      "Detector: CYCLICAL (Cyclical sector: Basic Materials)",
+      "Models assigned: mid_cycle, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: PASS (75/100)",
+      "  MidCycleEV: IV=\u20b9535",
+      "All 1 models ran without crash",
+      "Aggregator: Weighted IV \u20b9535 (LOW \u2014 only 1 model available)",
+      "Verdict: AVOID",
+      "Discount: -305.6%"
+    ],
+    "failed": [],
+    "warnings": [
+      "Expected type GENERAL, got CYCLICAL \u2014 may need config tuning"
+    ],
+    "data": {
+      "stock_type": "CYCLICAL",
+      "cmp": 2169.0,
+      "iv": 534.76,
+      "verdict": "AVOID",
+      "quality": "PASS (75/100)",
+      "discount": "-305.6%"
+    }
+  },
+  {
+    "symbol": "IRCTC",
+    "success": true,
+    "passed": [
+      "Fetch OK (2.3s)",
+      "Cache write+read OK",
+      "Cleaner returned non-empty dict",
+      "CMP present: \u20b9512",
+      "Symbol: IRCTC.NS",
+      "Sector: Consumer Cyclical",
+      "Detector: CYCLICAL (High revenue volatility (29.7%))",
+      "Models assigned: mid_cycle, relative",
+      "Weights sum \u2248 1.0 (1.00)",
+      "Quality Grade: STRONG PASS (100/100)",
+      "  MidCycleEV: IV=\u20b9130",
+      "All 1 models ran without crash",
+      "Aggregator: Weighted IV \u20b9130 (LOW \u2014 only 1 model available)",
+      "Verdict: AVOID",
+      "Discount: -294.4%"
+    ],
+    "failed": [],
+    "warnings": [],
+    "data": {
+      "stock_type": "CYCLICAL",
+      "cmp": 511.8,
+      "iv": 129.77,
+      "verdict": "AVOID",
+      "quality": "STRONG PASS (100/100)",
+      "discount": "-294.4%"
+    }
   }
 ]

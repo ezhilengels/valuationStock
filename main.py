@@ -204,6 +204,15 @@ def print_multi_summary(results: list):
 # =============================================================================
 
 def main():
+    # ── Fetch Live Macro Data ──────────────────────────────────────────────
+    from data.fetcher import fetch_gsec_yield
+    import config as cfg
+    
+    live_yield = fetch_gsec_yield()
+    if live_yield:
+        cfg.GSEC_10Y_YIELD = live_yield
+        print(f"{Fore.YELLOW}  ℹ Live India 10Y G-Sec: {live_yield*100:.2f}%{Style.RESET_ALL}")
+
     parser = argparse.ArgumentParser(
         description=(
             "NSE Stock Valuation Bot — India\n"

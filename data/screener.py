@@ -29,6 +29,7 @@ import re
 import time
 import requests
 from bs4 import BeautifulSoup
+from typing import Union, List, Dict
 
 # ── Constants ────────────────────────────────────────────────────────────────
 BASE_URL      = "https://www.screener.in/company/{symbol}/consolidated/"
@@ -102,7 +103,7 @@ def fetch_screener_data(symbol: str) -> dict:
 # HTML FETCH
 # =============================================================================
 
-def _fetch_html(url: str) -> str | None:
+def _fetch_html(url: str) -> Union[str, None]:
     """Fetch URL with retries. Returns HTML string or None."""
     for attempt in range(MAX_RETRIES + 1):
         try:
@@ -124,7 +125,7 @@ def _fetch_html(url: str) -> str | None:
 # PAGE PARSER
 # =============================================================================
 
-def _parse_screener_page(html: str) -> dict | None:
+def _parse_screener_page(html: str) -> Union[dict, None]:
     """
     Parse screener.in HTML into a flat dict.
     Returns None if the page doesn't look like a valid company page.
@@ -339,7 +340,7 @@ def _parse_historical_tables(soup: BeautifulSoup) -> dict:
 # UTILITY
 # =============================================================================
 
-def _clean_number(text: str) -> float | None:
+def _clean_number(text: str) -> Union[float, None]:
     """
     Convert screener.in formatted numbers to float.
     Handles: "1,234.56", "12.3%", "₹ 234", "2,34,567", "N/A", "--"
@@ -369,7 +370,7 @@ def _clean_number(text: str) -> float | None:
 # CONVENIENCE HELPERS (called from fetcher.py)
 # =============================================================================
 
-def get_promoter_holding(symbol: str) -> float | None:
+def get_promoter_holding(symbol: str) -> Union[float, None]:
     """Quick helper — returns promoter holding % as decimal or None."""
     data = fetch_screener_data(symbol)
     return data.get("promoter_holding")
