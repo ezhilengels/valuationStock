@@ -3,10 +3,16 @@
 # Stock Valuation Bot | valutionStock Project
 # =============================================================================
 
-# ── DISCOUNT RATES (WACC by market cap) ──────────────────────────────────────
-DISCOUNT_RATE_LARGE_CAP  = 0.12   # 12% — Nifty 50 stocks
-DISCOUNT_RATE_MID_CAP    = 0.14   # 14% — Nifty Midcap 100
-DISCOUNT_RATE_SMALL_CAP  = 0.16   # 16% — Small caps / high risk
+# ── DISCOUNT RATES (CAPM Based) ───────────────────────────────────────────────
+# Cost of Equity = Risk Free Rate + (Beta * Equity Risk Premium)
+def get_discount_rate(beta: float = 1.0) -> float:
+    """Calculate risk-adjusted discount rate using live G-Sec yield."""
+    beta = beta or 1.0
+    ke = GSEC_10Y_YIELD + (beta * EQUITY_RISK_PREMIUM)
+    # Floor at 10% and Cap at 20% for sanity in Indian markets
+    return max(min(ke, 0.20), 0.10)
+
+DISCOUNT_RATE_LARGE_CAP  = 0.12   # Legacy — used as fallback
 
 # ── GROWTH RATES ──────────────────────────────────────────────────────────────
 TERMINAL_GROWTH_RATE     = 0.055  # 5.5% — India long-run GDP growth

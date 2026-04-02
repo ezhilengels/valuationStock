@@ -133,6 +133,7 @@ def aggregate(results: dict, detection: dict) -> dict:
     return {
         "weighted_iv" : round(weighted_iv, 2),
         "model_ivs"   : {k: round(v, 2) for k, v in model_ivs.items()},
+        "model_results": results,  # Pass through full results for decision gate
         "weights_used": {k: round(v, 3) for k, v in weights_used.items()},
         "iv_range"    : iv_range,
         "confidence"  : confidence,

@@ -4,6 +4,7 @@
 # =============================================================================
 
 import sys, os
+from typing import Union, List, Dict, Tuple
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import (
     DISCOUNT_RATE_LARGE_CAP, GSEC_10Y_YIELD, TERMINAL_GROWTH_RATE
@@ -154,10 +155,33 @@ def clean(data: dict) -> dict:
     if not d.get("ev") and d.get("market_cap"):
         d["ev"] = d["market_cap"] + (d.get("total_debt") or 0) - (d.get("cash") or 0)
 
+    # ── TTM-LINEARIZATION (Data Scaling) ───────────────────────────────────
+    # If TTM Revenue > Annual Revenue, the company has grown since the last 
+    # annual report. Scale annual-only metrics (Capex, FCF) up to TTM levels.
+    ttm_rev = d.get("revenue_ttm")
+    ann_rev = _latest(d.get("revenue_5y", []))
+    
+    if ttm_rev and ann_rev and ann_rev > 0:
+        scaling_factor = max(0.8, min(ttm_rev / ann_rev, 1.5)) # Cap between 0.8x and 1.5x
+        if abs(scaling_factor - 1.0) > 0.05: # Only scale if difference > 5%
+            # Scale Capex TTM (if it came from annual)
+            if d.get("capex_ttm"):
+                d["capex_ttm"] *= scaling_factor
+            
+            # Scale FCF seed (if it came from annual series)
+            if d.get("fcf_5y"):
+                d["fcf_5y"] = [v * scaling_factor if v is not None else None for v in d["fcf_5y"]]
+            
+            # Scale Depreciation
+            if d.get("depreciation_ttm"):
+                d["depreciation_ttm"] *= scaling_factor
+            
+            _note(d, "ttm_linearization", f"scaled annual metrics by {scaling_factor:.2f}x to match TTM revenue")
+
     return d
 
 
-def validate(data: dict) -> tuple[bool, list]:
+def validate(data: dict) -> Tuple[bool, List]:
     """
     Returns (is_valid, list_of_warnings).
     Checks that critical data points exist for running any valuation.

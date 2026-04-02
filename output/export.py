@@ -112,9 +112,9 @@ def _build_summary_sheet(wb, results):
     headers = [
         "Ticker", "Company Name", "Sector / Type", "CMP (₹)",
         "Weighted IV (₹)", "Discount %", "IV Range (₹)",
-        "Quality Grade", "Quality Score", "Peers", "Models Used", "VERDICT"
+        "Quality Grade", "Retention Check", "Bond Gate", "Peers", "VERDICT"
     ]
-    col_widths = [14, 28, 22, 12, 16, 12, 20, 14, 13, 20, 30, 18]
+    col_widths = [14, 28, 22, 12, 16, 12, 20, 14, 16, 16, 20, 18]
 
     for col, (hdr, width) in enumerate(zip(headers, col_widths), 1):
         cell = ws.cell(row=3, column=col, value=hdr)
@@ -157,6 +157,13 @@ def _build_summary_sheet(wb, results):
         rel = (r.get("model_results") or {}).get("Relative", {})
         peers = (rel or {}).get("overall_relative", "N/A")
 
+        # Buffett Checks
+        qr_checklist = (r.get("quality_result") or {}).get("checklist", {})
+        retention = qr_checklist.get("retention_check", {}).get("result", "N/A")
+        
+        flags = (r.get("decision") or {}).get("flags", [])
+        bond_gate = "FAILED" if any("BOND GATE FAILED" in f for f in flags) else "PASS"
+
         row_data = [
             r.get("symbol", ""),
             r.get("name", ""),
@@ -166,9 +173,9 @@ def _build_summary_sheet(wb, results):
             f"{discount:+.1f}%" if discount is not None else "N/A",
             iv_range,
             q_grade,
-            r.get("quality_result", {}).get("score", "N/A"),
+            retention,
+            bond_gate,
             peers,
-            models_used,
             verdict,
         ]
 
@@ -193,17 +200,19 @@ def _build_summary_sheet(wb, results):
                 _style(cell, bg=disc_color, bold=True, align="center")
             if col == 8:   # Quality Grade
                 _style(cell, bg=q_color, align="center")
-            if col == 9:   # Quality Score
-                score = r.get("quality_result", {}).get("score", 0)
-                s_color = (COLORS["strong_buy"] if score >= 80
-                           else COLORS["buy"] if score >= 60
-                           else COLORS["hold"] if score >= 40
-                           else COLORS["fail_red"])
-                _style(cell, bg=s_color, align="center")
-            if col == 10:  # Peers
+            if col == 9:   # Retention Check
+                ret_color = (COLORS["pass_green"] if "PASS" in str(retention)
+                             else COLORS["fail_red"] if "FAIL" in str(retention)
+                             else row_bg)
+                _style(cell, bg=ret_color, align="center")
+            if col == 10:  # Bond Gate
+                bg_color = (COLORS["pass_green"] if bond_gate == "PASS"
+                            else COLORS["fail_red"])
+                _style(cell, bg=bg_color, align="center")
+            if col == 11:  # Peers
                 p_color = (COLORS["cheap"] if "CHEAP" in str(peers)
                            else COLORS["expensive"] if "EXPENSIVE" in str(peers)
-                           else "FFFFFF")
+                           else row_bg)
                 _style(cell, bg=p_color)
             if col == 12:  # Verdict
                 _style(cell, bg=v_color, bold=True, align="center", size=10)

@@ -13,7 +13,7 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import (
-    DISCOUNT_RATE_LARGE_CAP, TERMINAL_GROWTH_RATE,
+    get_discount_rate, TERMINAL_GROWTH_RATE,
     MAINTENANCE_CAPEX_RATIO, GSEC_10Y_YIELD
 )
 
@@ -42,6 +42,7 @@ def calculate(data: dict) -> dict:
     eps         = data.get("eps_ttm")
     cmp         = data.get("cmp")
     g_rate      = data.get("eps_growth_5y") or 0.06
+    beta        = data.get("beta") or 1.0
 
     # ── Validation ─────────────────────────────────────────────────────────
     if not net_profit:
@@ -50,23 +51,29 @@ def calculate(data: dict) -> dict:
     if net_profit <= 0:
         return _invalid("Net Profit is negative — Owner Earnings not applicable")
 
-    # ── Owner Earnings ──────────────────────────────────────────────────────
+    # ── Owner Earnings (Trend-Based) ────────────────────────────────────────
     # Buffett's Rule: Maintenance Capex is the expense required to maintain unit volume.
-    # Technical Heuristic:
-    # 1. If Total Capex < Depreciation, use Total Capex as maintenance (likely asset-light).
-    # 2. If Total Capex > Depreciation, use Depreciation as a safe floor for maintenance.
-    # 3. Fallback: If no depreciation data, use 60% rule.
+    # Technical Heuristic: Use 5-year averages to "smooth" out one-time growth capex.
     
-    if depreciation and capex:
-        maintenance_capex = min(capex, depreciation)
-        maint_method = "Min(Capex, Depr)"
-    elif capex:
-        maintenance_capex = capex * MAINTENANCE_CAPEX_RATIO
-        maint_method = f"{MAINTENANCE_CAPEX_RATIO*100:.0f}% of Capex"
+    capex_5y = [abs(v) for v in (data.get("capex_5y") or []) if v is not None]
+    depr_5y  = [v for v in (data.get("depreciation_5y") or []) if v is not None]
+    
+    if len(capex_5y) >= 3 and len(depr_5y) >= 3:
+        avg_capex = sum(capex_5y) / len(capex_5y)
+        avg_depr  = sum(depr_5y) / len(depr_5y)
+        
+        # If Average Capex > Average Depreciation, the company is likely spending on growth.
+        # Depreciation is the best proxy for "maintenance" in a steady state.
+        maintenance_capex = min(avg_capex, avg_depr)
+        maint_method = "5Y Trend (Min of Avg Capex/Depr)"
     else:
-        # No capex data — assume maintenance is roughly depreciation or 0
-        maintenance_capex = depreciation
-        maint_method = "Full Depreciation"
+        # Fallback to TTM snapshot if history is missing
+        if depreciation and capex:
+            maintenance_capex = min(capex, depreciation)
+            maint_method = "TTM Snapshot (Min Capex/Depr)"
+        else:
+            maintenance_capex = capex * MAINTENANCE_CAPEX_RATIO if capex else depreciation
+            maint_method = "Fallback Ratio/Depr"
 
     owner_earnings = net_profit + depreciation - maintenance_capex
 
@@ -79,7 +86,7 @@ def calculate(data: dict) -> dict:
     # ── Sustainable Growth Rate ─────────────────────────────────────────────
     # Use lower of: reported growth or 12% cap for terminal assumption
     g = min(g_rate, 0.12)
-    r = DISCOUNT_RATE_LARGE_CAP   # 12%
+    r = get_discount_rate(beta)
 
     if r <= g:
         g = r * 0.5   # Fallback if growth >= discount rate

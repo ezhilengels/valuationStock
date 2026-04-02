@@ -11,8 +11,8 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import (
-    DISCOUNT_RATE_LARGE_CAP, DISCOUNT_RATE_MID_CAP,
-    TERMINAL_GROWTH_RATE, DCF_STAGE1_YEARS, DCF_STAGE2_YEARS,
+    get_discount_rate, TERMINAL_GROWTH_RATE,
+    DCF_STAGE1_YEARS, DCF_STAGE2_YEARS,
     DCF_STAGE2_GROWTH_FACTOR
 )
 from data.cleaner import avg_fcf
@@ -73,11 +73,9 @@ def calculate(data: dict, pharma_haircut: bool = False) -> dict:
     stage2_growth = stage1_growth * DCF_STAGE2_GROWTH_FACTOR
     terminal_g    = TERMINAL_GROWTH_RATE           # 5.5%
 
-    # ── Discount Rate (WACC) ──────────────────────────────────────────────
-    if mkt_cap >= 20_000_00_00_000:    # > ₹20,000 Cr = Large cap
-        r = DISCOUNT_RATE_LARGE_CAP    # 12%
-    else:
-        r = DISCOUNT_RATE_MID_CAP      # 14%
+    # ── Discount Rate (WACC / Ke) ──────────────────────────────────────────
+    # CAPM: r = G-Sec + (Beta * Equity Risk Premium)
+    r = get_discount_rate(data.get("beta", 1.0))
 
     if r <= terminal_g:
         return _invalid(f"Discount rate ({r}) must be > terminal growth ({terminal_g})")

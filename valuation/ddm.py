@@ -12,7 +12,7 @@
 
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import DISCOUNT_RATE_LARGE_CAP, GSEC_10Y_YIELD
+from config import get_discount_rate, GSEC_10Y_YIELD
 
 
 def calculate(data: dict) -> dict:
@@ -34,7 +34,8 @@ def calculate(data: dict) -> dict:
     dps       = data.get("dps") or 0
     g_rate    = data.get("dps_growth_5y") or 0.05
     cmp       = data.get("cmp")
-    r         = DISCOUNT_RATE_LARGE_CAP   # 12%
+    beta      = data.get("beta") or 1.0
+    r         = get_discount_rate(beta)
 
     # ── Validation ─────────────────────────────────────────────────────────
     if not dps or dps <= 0:

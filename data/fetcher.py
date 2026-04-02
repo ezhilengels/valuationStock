@@ -192,6 +192,23 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
     data["net_profit_ttm"]   = _latest(data["net_profit_5y"])
     data["interest_exp_ttm"] = abs(_latest(data["interest_exp_5y"]) or 0)
 
+    # ── HISTORICAL PRICE & DIVIDENDS ─────────────────────────────────────────
+    try:
+        hist_5y = ticker.history(period="5y")
+        if not hist_5y.empty:
+            # 5-year ago price (first available in 5y window)
+            p_5y_ago = float(hist_5y["Close"].iloc[0])
+            if data["shares_outstanding"]:
+                data["market_cap_5y_ago"] = p_5y_ago * data["shares_outstanding"]
+            
+            # Annual dividends for the last 5 years
+            divs = ticker.dividends
+            if not divs.empty:
+                divs_annual = divs.resample("YE").sum().tail(5).iloc[::-1] # Newest first
+                data["dps_5y"] = divs_annual.tolist()
+    except Exception:
+        pass
+
     # ── COMPUTED RATIOS ──────────────────────────────────────────────────────
     mc = data["market_cap"] or 0
     td = data["total_debt"] or 0
@@ -411,23 +428,43 @@ def _dividend_growth(ticker: yf.Ticker) -> Union[float, None]:
 
 
 def _compute_tax_rate(financials: pd.DataFrame) -> float:
-    """Estimate effective tax rate from latest year."""
+    """
+    Estimate effective tax rate by averaging the last 3 years.
+    Formula: Tax Provision / Pretax Income
+    """
     try:
-        pretax = None
-        tax    = None
-        for row in ["Pretax Income", "Income Before Tax"]:
+        pretax_rows = ["Pretax Income", "Income Before Tax"]
+        tax_rows    = ["Tax Provision", "Income Tax Expense"]
+        
+        pretax_series = None
+        for row in pretax_rows:
             if row in financials.index:
-                pretax = financials.loc[row].dropna().iloc[0]
+                pretax_series = financials.loc[row].dropna()
                 break
-        for row in ["Tax Provision", "Income Tax Expense"]:
+        
+        tax_series = None
+        for row in tax_rows:
             if row in financials.index:
-                tax = financials.loc[row].dropna().iloc[0]
+                tax_series = financials.loc[row].dropna()
                 break
-        if pretax and tax and pretax > 0:
-            return abs(float(tax)) / float(pretax)
+        
+        if pretax_series is not None and tax_series is not None:
+            rates = []
+            # Align by columns (years) and take up to 3 most recent
+            common_cols = pretax_series.index.intersection(tax_series.index)[:3]
+            for col in common_cols:
+                pretax = float(pretax_series[col])
+                tax    = abs(float(tax_series[col]))
+                if pretax > 0:
+                    rates.append(tax / pretax)
+            
+            if rates:
+                avg_rate = sum(rates) / len(rates)
+                # Cap at 35% (max India corp tax) and floor at 10% (MAT minimums)
+                return max(min(avg_rate, 0.35), 0.10)
     except Exception:
         pass
-    return 0.25   # Default: 25% India corporate tax rate
+    return 0.25   # Default fallback: 25% India corporate tax rate
 
 
 def _std_pct(series: list) -> Union[float, None]:

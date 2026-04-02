@@ -160,7 +160,7 @@ def detect(data: dict) -> dict:
     # ── Rule 5: HIGH GROWTH — IT / Pharma ─────────────────────────────────
     is_it     = any(s.lower() in sector.lower() for s in IT_SECTORS)
     is_pharma = any(s.lower() in sector.lower() for s in PHARMA_SECTORS)
-    if (is_it or is_pharma) and eps_growth > 0.15:
+    if (is_it or is_pharma) and eps_growth > 0.10:
         pharma_note = (
             "ℹ PHARMA: Stage 1 DCF growth discounted 30% for pipeline risk"
             if is_pharma else None

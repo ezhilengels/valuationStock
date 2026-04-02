@@ -12,6 +12,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
+from typing import Union, List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -183,7 +184,7 @@ def section(title: str):
 
 
 @st.cache_data(ttl=3600, show_spinner=False)   # Cache 1 hour (P/E history rarely changes)
-def fetch_pe_history(symbol: str, period: str = "5y") -> pd.DataFrame | None:
+def fetch_pe_history(symbol: str, period: str = "5y") -> Union[pd.DataFrame, None]:
     """
     Fetch historical weekly closing prices and compute rolling P/E band.
 
@@ -367,6 +368,40 @@ if page == "📊 Single Stock Analysis":
                     showlegend=False
                 )
                 st.plotly_chart(fig, use_container_width=True)
+
+            # ── 5-YEAR FINANCIAL TRENDS ────────────────────────────────────
+            section("📈 5-Year Financial Trends (Sales & Net Profit)")
+            rev_5y = data.get("revenue_5y") or []
+            np_5y  = data.get("net_profit_5y") or []
+            
+            # Clean and reverse (show oldest to newest)
+            rev_5y = [r/1e7 for r in rev_5y if r is not None][::-1]
+            np_5y  = [n/1e7 for n in np_5y if n is not None][::-1]
+            years  = [f"Y-{len(rev_5y)-i-1}" for i in range(len(rev_5y))]
+            if len(years) > 1:
+                fig_trend = go.Figure()
+                fig_trend.add_trace(go.Scatter(
+                    x=years, y=rev_5y, name="Sales (Cr)",
+                    line=dict(color="#1F3864", width=3),
+                    marker=dict(size=8)
+                ))
+                fig_trend.add_trace(go.Scatter(
+                    x=years, y=np_5y, name="Net Profit (Cr)",
+                    line=dict(color="#00B050", width=3),
+                    marker=dict(size=8),
+                    yaxis="y2"
+                ))
+                fig_trend.update_layout(
+                    height=300, margin=dict(l=10, r=10, t=30, b=20),
+                    plot_bgcolor="#fafafa", paper_bgcolor="#fafafa",
+                    hovermode="x unified",
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    yaxis=dict(title="Sales (₹ Cr)", side="left"),
+                    yaxis2=dict(title="Profit (₹ Cr)", side="right", overlaying="y", showgrid=False)
+                )
+                st.plotly_chart(fig_trend, use_container_width=True)
+            else:
+                st.info("Insufficient historical data for trend chart")
 
             # RELATIVE VALUATION TABLE
             section("📊 Relative Valuation vs Sector Peers")

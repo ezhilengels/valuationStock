@@ -13,7 +13,7 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import (
-    GSEC_10Y_YIELD, EQUITY_RISK_PREMIUM,
+    get_discount_rate, GSEC_10Y_YIELD, EQUITY_RISK_PREMIUM,
     BETA_LARGE_BANK, TERMINAL_GROWTH_RATE
 )
 
@@ -55,9 +55,7 @@ def calculate(data: dict) -> dict:
     avg_roe = sum(roe_vals[:3]) / len(roe_vals[:3])
 
     # ── Cost of Equity (CAPM) ──────────────────────────────────────────────
-    beta    = min(max(beta, 0.5), 2.5)   # Sanity clamp
-    coe     = GSEC_10Y_YIELD + beta * EQUITY_RISK_PREMIUM
-    # e.g. 7% + 1.1 × 5% = 12.5%
+    coe = get_discount_rate(beta)
 
     # ── Excess Return ──────────────────────────────────────────────────────
     excess_return = avg_roe - coe   # Positive = value creation

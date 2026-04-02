@@ -70,7 +70,17 @@ def decide(cmp: float, agg: dict, quality: dict,
             action     = "Gather more financial data before investing"
         )
 
-    # ── Special: Early Stage ──────────────────────────────────────────────
+    # ── Bond First Gate: Earnings Yield vs G-Sec ──────────────────────────
+    # If risk-free bonds pay more than the stock's earnings yield, avoid.
+    buffett_res = agg.get("model_results", {}).get("Buffett", {})
+    ey          = buffett_res.get("earnings_yield")
+    gsec        = buffett_res.get("gsec_yield")
+    ey_fail     = False
+    
+    if ey and gsec and ey < gsec:
+        ey_fail = True
+        flags.append(f"⚠ BOND GATE FAILED: G-Sec ({gsec:.1f}%) > Stock Yield ({ey:.1f}%)")
+        flags.append("Risk-free bonds offer better returns than this stock.")
     if stock_type == EARLY_STAGE:
         flags.append("⚠ Loss-making / pre-profit company — EV/Sales used")
         flags.append("High risk: valuation is speculative, not intrinsic")
@@ -108,6 +118,14 @@ def decide(cmp: float, agg: dict, quality: dict,
     else:
         margin_verdict = f"SIGNIFICANTLY OVERPRICED ({abs(discount)*100:.1f}% above IV)"
         raw_verdict    = AVOID
+
+    # ── Bond Gate Override ────────────────────────────────────────────────
+    if ey_fail and raw_verdict in [STRONG_BUY, BUY]:
+        raw_verdict = HOLD
+        flags.append("Verdict downgraded to HOLD because risk-free bonds are currently more attractive")
+    elif ey_fail and raw_verdict == HOLD:
+        raw_verdict = OVERVALUED
+        flags.append("Verdict downgraded to OVERVALUED because bond yield > earnings yield")
 
     # ── Quality Gate Override ─────────────────────────────────────────────
     if quality_grade == "FAIL":

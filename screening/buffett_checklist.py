@@ -284,6 +284,52 @@ def run(data: dict) -> dict:
     }
 
     # ─────────────────────────────────────────────────────────────────────────
+    # CHECK 9 — Buffett's Retention Check (MVA per ₹1 Retained)
+    # Market Value Added (MVA) over 5Y vs Total Retained Earnings over 5Y.
+    # Logic: For every ₹1 retained, has the company created ≥ ₹1 in market value?
+    # ─────────────────────────────────────────────────────────────────────────
+    try:
+        np_series   = data.get("net_profit_5y") or []
+        dps_series  = data.get("dps_5y") or []
+        shares      = data.get("shares_outstanding") or 1
+        mc_now      = data.get("market_cap") or 0
+        mc_5y_ago   = data.get("market_cap_5y_ago") or 0
+        
+        # Estimate total retained earnings over 5 years (Net Profit - Dividends)
+        total_retained = 0
+        for i, np_val in enumerate(np_series):
+            if np_val is not None:
+                dps_val = dps_series[i] if i < len(dps_series) else 0
+                div_paid = (dps_val or 0) * shares
+                total_retained += (np_val - div_paid)
+        
+        mva_5y = mc_now - mc_5y_ago
+        
+        if total_retained > 0 and mva_5y > 0:
+            retention_ratio = mva_5y / total_retained
+            if retention_ratio >= 1.0:
+                signals.append(f"Efficient capital allocation (Created ₹{retention_ratio:.2f} Mkt Value per ₹1 retained)")
+                moat_score += 2
+                ret_result = "PASS"
+            elif retention_ratio > 0.5:
+                ret_result = "MARGINAL"
+            else:
+                red_flags.append(f"Poor capital allocation (Created only ₹{retention_ratio:.2f} Mkt Value per ₹1 retained)")
+                ret_result = "FAIL"
+            
+            checklist["retention_check"] = {
+                "name"  : "Buffett Retention Check (MVA/Retained ≥ 1)",
+                "result": ret_result,
+                "value" : f"{retention_ratio:.2f}x",
+                "detail": f"Mkt Cap Change: ₹{mva_5y/1e7:.1f}Cr | Retained: ₹{total_retained/1e7:.1f}Cr"
+            }
+        else:
+            checklist["retention_check"] = {"result": "N/A", "name": "Buffett Retention Check", "value": "N/A"}
+            
+    except Exception:
+        checklist["retention_check"] = {"result": "N/A", "name": "Buffett Retention Check", "value": "N/A"}
+
+    # ─────────────────────────────────────────────────────────────────────────
     # FINAL MOAT RATING
     # ─────────────────────────────────────────────────────────────────────────
     moat_score = min(moat_score, 10)

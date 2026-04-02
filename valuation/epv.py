@@ -9,7 +9,7 @@
 
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import DISCOUNT_RATE_LARGE_CAP, DISCOUNT_RATE_MID_CAP
+from config import get_discount_rate
 
 
 def calculate(data: dict) -> dict:
@@ -33,6 +33,7 @@ def calculate(data: dict) -> dict:
     mkt_cap    = data.get("market_cap") or 0
     cash       = data.get("cash") or 0
     debt       = data.get("total_debt") or 0
+    beta       = data.get("beta") or 1.0
 
     # ── Adjusted EBIT: 3-year average to smooth out one-offs ───────────────
     ebit_vals = [v for v in ebit_list[:3] if v is not None and v > 0]
@@ -44,12 +45,8 @@ def calculate(data: dict) -> dict:
     if adj_ebit <= 0:
         return _invalid("Adjusted EBIT is negative — EPV not applicable")
 
-    # ── WACC ───────────────────────────────────────────────────────────────
-    wacc = (
-        DISCOUNT_RATE_LARGE_CAP
-        if mkt_cap >= 20_000_00_00_000
-        else DISCOUNT_RATE_MID_CAP
-    )
+    # ── WACC / Ke ─────────────────────────────────────────────────────────
+    wacc = get_discount_rate(beta)
 
     # ── NOPAT = Net Operating Profit After Tax ─────────────────────────────
     # Normalize tax rate: cap between 15% and 40%
