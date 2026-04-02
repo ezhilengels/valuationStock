@@ -1,0 +1,35 @@
+[
+  {
+    "symbol": "INFY",
+    "success": false,
+    "passed": [],
+    "failed": [
+      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
+      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    ],
+    "warnings": [],
+    "data": {}
+  },
+  {
+    "symbol": "HDFCBANK",
+    "success": false,
+    "passed": [],
+    "failed": [
+      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
+      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    ],
+    "warnings": [],
+    "data": {}
+  },
+  {
+    "symbol": "COALINDIA",
+    "success": false,
+    "passed": [],
+    "failed": [
+      "OUTER EXCEPTION: unsupported operand type(s) for |: 'type' and 'NoneType'",
+      "Traceback (most recent call last):\n  File \"/Users/nathiya/Documents/my app/valutionStock/tests/test_stocks.py\", line 158, in run_full_test\n    from data.fetcher import fetch_stock_data\n  File \"/Users/nathiya/Documents/my app/valutionStock/data/fetcher.py\", line 48, in <module>\n    use_screener: bool = True) -> dict | None:\nTypeError: unsupported operand type(s) for |: 'type' and 'NoneType'\n"
+    ],
+    "warnings": [],
+    "data": {}
+  }
+]
