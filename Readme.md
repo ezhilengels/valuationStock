@@ -21,6 +21,8 @@ python3 -m streamlit run dashboard.py
 
 Practical rule right now: Every time you change the date in .env or toggle SIMULATION_MODE, you must run rm -rf .cache first. It's a manual step but it's the only safe approach until the cache key is made date-aware.
 
+code run :  rm -rf .cache 
+
 ### Single stock:
 ```
 python main.py INFY
