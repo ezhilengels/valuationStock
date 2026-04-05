@@ -204,6 +204,13 @@ def detect(data: dict) -> dict:
 
 
 def _result(stock_type, reason, models_to_use, models_to_skip, weights, warning):
+    import config as cfg
+    if cfg.ENABLE_BUFFET_YIELD_FOR_ALL:
+        if "buffett" not in models_to_use:
+            models_to_use.append("buffett")
+        if "buffett" in models_to_skip:
+            models_to_skip.remove("buffett")
+
     return {
         "stock_type"    : stock_type,
         "reason"        : reason,

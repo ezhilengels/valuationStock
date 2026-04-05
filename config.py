@@ -19,6 +19,9 @@ SIMULATED_MONTH = os.getenv("SIMULATED_MONTH")  # e.g., "12"
 # When true           : bot uses SIMULATED_YEAR / SIMULATED_MONTH for CMP + G-Sec
 SIMULATION_MODE = os.getenv("SIMULATION_MODE", "false").strip().lower() == "true"
 
+# R&D Toggle - set to true to force Buffett model for all stock types (for R&D and Yield comparison)
+ENABLE_BUFFET_YIELD_FOR_ALL = os.getenv("ENABLE_BUFFET_YIELD_FOR_ALL", "false").strip().lower() == "true"
+
 # ── DISCOUNT RATES (CAPM Based) ───────────────────────────────────────────────
 # Cost of Equity = Risk Free Rate + (Beta * Equity Risk Premium)
 def get_discount_rate(beta: float = 1.0) -> float:
