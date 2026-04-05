@@ -139,6 +139,61 @@ WATCHLISTS = {
     "custom": [
         "INFY", "HDFCBANK", "COALINDIA",
     ],
+     # ── 8 SECTORAL BUCKETS (NSE STANDARD) ───────────────────────────────────
+    "financials_v2": [
+        "HDFCBANK", "ICICIBANK", "SBIN", "KOTAKBANK", "AXISBANK", 
+        "BAJFINANCE", "CHOLAFIN", "RECLTD", "PFC", "HDFCLIFE", "SBILIFE",
+        "MUTHOOTFIN"
+    ],
+
+    "technology_v2": [
+        "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "LTIM", "PERSISTENT", "COFORGE"
+    ],
+
+    "consumer_v2": [
+        "HINDUNILVR", "ITC", "NESTLEIND", "BRITANNIA", "TATACONSUM", 
+        "VBL", "TITAN", "ASIANPAINT", "BERGEPAINT", "HAVELLS", "TRENT"
+    ],
+
+    "healthcare_v2": [
+        "SUNPHARMA", "CIPLA", "DRREDDY", "DIVISLAB", "APOLLOHOSP", 
+        "MAXHEALTH", "MANKIND", "TORNTPHARM"
+    ],
+
+    "automobile_v2": [
+        "TATAMOTORS", "M&M", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", 
+        "TVSMOTOR", "HEROMOTOCO", "SONACOMS"
+    ],
+
+    "energy_v2": [
+        "RELIANCE", "ONGC", "COALINDIA", "BPCL", "NTPC", 
+        "POWERGRID", "ADANIGREEN", "TATAPOWER"
+    ],
+
+    "materials_v2": [
+        "TATASTEEL", "JSWSTEEL", "HINDALCO", "JINDALSTEL", 
+        "ULTRACEMCO", "GRASIM", "PIDILITIND", "SRF"
+    ],
+
+    "chemicals_v2": [
+        "SRF", "DEEPAKNITR", "TATACHEM", "NAVINFLUOR", "AARTIIND", "GUJGASLTD"
+    ],
+
+    "infrastructure_v2": [
+        "LT", "LICI", "DLF", "BEL", "HAL", "BHEL", "ADANIPORTS", "CONCOR", "SIEMENS"
+    ],
+
+    "reliable_bluechips_v2": [
+        "TCS", "HDFCBANK", "RELIANCE", "INFY", "HINDUNILVR", "ITC", 
+        "LT", "ICICIBANK", "SBIN", "KOTAKBANK", "BAJFINANCE", "SRF",
+        "PIDILITIND", "TITAN", "SUNPHARMA", "MARUTI", "ASIANPAINT",
+        "ULTRACEMCO", "ADANIPORTS", "TRENT", "VBL"
+    ],
+
+    "defensive_v2": [
+        "ONGC", "OIL", "HAL", "BEL", "MAZDOCK", "ADANIGREEN", 
+        "TATAPOWER", "ITC", "NESTLEIND", "MUTHOOTFIN", "SOLARINDS"
+    ],
 }
 
 
