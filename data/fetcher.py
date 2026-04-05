@@ -140,6 +140,28 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
         print(f"  [ERROR] Could not fetch data: {e}")
         return None
 
+    # ── Currency Fix: convert USD financials → INR for dual-listed companies ──
+    # Some NSE companies (INFY, WIPRO, HCLTECH, DRREDDY, ICICIBANK etc.) file
+    # with the US SEC in USD. yfinance picks up those filings so financials
+    # come back in USD millions while CMP is in INR — causing nonsense EPS/EBIT.
+    # Fix: detect via financialCurrency field, fetch correct USD/INR rate,
+    # multiply all 3 DataFrames before any series extraction happens.
+    # For INR companies this block is skipped entirely — zero impact.
+    _fin_currency = (info.get("financialCurrency") or "INR").upper()
+    if _fin_currency != "INR":
+        if SIMULATION_MODE and SIM_END_DATE:
+            _fx_rate = _get_usd_inr_rate(sim_end_date=SIM_END_DATE)
+        else:
+            _fx_rate = _get_usd_inr_rate()
+        print(f"  [FX] financialCurrency={_fin_currency} → "
+              f"converting all statements at ₹{_fx_rate:.2f}/{_fin_currency}")
+        if financials is not None and not financials.empty:
+            financials = financials * _fx_rate
+        if balance is not None and not balance.empty:
+            balance = balance * _fx_rate
+        if cashflow is not None and not cashflow.empty:
+            cashflow = cashflow * _fx_rate
+
     # ── V2 Simulation: strip future fiscal years from all 3 DataFrames ───────
     # yfinance columns are fiscal year-end dates (e.g. 2025-03-31).
     # In Dec 2024 those results didn't exist yet — filter them out so every
@@ -424,6 +446,29 @@ def _enrich_from_screener(symbol: str, data: dict) -> dict:
 # =============================================================================
 # HELPERS
 # =============================================================================
+
+def _get_usd_inr_rate(sim_end_date: str = None) -> float:
+    """
+    Fetch USD/INR exchange rate from yfinance (ticker: INR=X).
+
+    sim_end_date : "YYYY-MM-DD" → fetch historical rate at that date (sim mode)
+    None         → fetch current live rate (live mode)
+
+    Falls back to 84.0 if the fetch fails (safe mid-range approximation).
+    Only called for companies where financialCurrency != "INR".
+    """
+    try:
+        fx = yf.Ticker("INR=X")
+        if sim_end_date:
+            hist = fx.history(start="2000-01-01", end=sim_end_date)
+        else:
+            hist = fx.history(period="2d")
+        if not hist.empty:
+            return float(hist["Close"].iloc[-1])
+    except Exception:
+        pass
+    return 84.0   # Fallback — approximate mid-range USD/INR
+
 
 def _filter_df_cols(df: pd.DataFrame, cutoff: pd.Timestamp) -> pd.DataFrame:
     """
