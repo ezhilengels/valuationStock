@@ -151,6 +151,7 @@ def run_valuation(symbol: str) -> dict:
         "symbol"        : symbol,
         "name"          : data.get("name"),
         "cmp"           : data.get("cmp"),
+        "live_cmp"      : data.get("live_cmp"),
         "iv"            : agg.get("weighted_iv"),
         "discount"      : decision.get("discount_pct"),
         "verdict"       : decision.get("verdict"),
@@ -287,7 +288,13 @@ if page == "📊 Single Stock Analysis":
 
         # ── Key Metrics Row ──────────────────────────────────────────────────
         st.divider()
-        m1, m2, m3, m4, m5, m6 = st.columns(6)
+        
+        # Determine columns based on simulation mode
+        if cfg.SIMULATION_MODE:
+            m1, m2, m_live, m_profit, m3, m4, m5, m6 = st.columns(8)
+        else:
+            m1, m2, m3, m4, m5, m6 = st.columns(6)
+
         mktcap = data.get("market_cap")
         roe_list = [r for r in (data.get("roe_5y") or []) if r is not None]
         avg_roe  = sum(roe_list) / len(roe_list) if roe_list else None
@@ -297,6 +304,14 @@ if page == "📊 Single Stock Analysis":
         m1.metric("CMP",        f"₹{cmp:,.2f}" if cmp else "N/A")
         m2.metric("Weighted IV", f"₹{iv:,.0f}" if iv else "N/A",
                   delta=f"{disc:+.1f}% MOS" if disc is not None else None)
+        
+        if cfg.SIMULATION_MODE:
+            live_p = result.get("live_cmp")
+            profit = ((live_p - cmp) / cmp * 100) if live_p and cmp else None
+            m_live.metric("Live Value", f"₹{live_p:,.2f}" if live_p else "N/A")
+            m_profit.metric("Sim. Profit", f"{profit:+.1f}%" if profit is not None else "N/A",
+                            delta=f"{profit:+.1f}%" if profit is not None else None)
+
         m3.metric("P/E",        f"{data.get('pe_ratio', 0):.1f}x" if data.get('pe_ratio') else "N/A")
         m4.metric("Avg ROE",    f"{avg_roe*100:.1f}%" if avg_roe else "N/A")
         m5.metric("D/E Ratio",  f"{de:.2f}" if de is not None else "N/A")
@@ -803,7 +818,11 @@ elif page == "🔍 Batch Scanner":
             st.warning("No stocks match the filter. Try 'All' to see all results.")
         else:
             # Summary counts
-            sc1, sc2, sc3, sc4, sc5 = st.columns(5)
+            if cfg.SIMULATION_MODE:
+                sc1, sc2, sc3, sc4, sc5, sc6, sc7 = st.columns(7)
+            else:
+                sc1, sc2, sc3, sc4, sc5 = st.columns(5)
+
             sc1.metric("Scanned",    len(results))
             sc2.metric("Strong Buy", sum(1 for r in results if r.get("verdict")=="STRONG BUY"),
                        delta_color="normal")
@@ -811,6 +830,19 @@ elif page == "🔍 Batch Scanner":
             sc4.metric("Hold",       sum(1 for r in results if r.get("verdict")=="HOLD"))
             sc5.metric("Avoid",      sum(1 for r in results
                                          if r.get("verdict") in ["OVERVALUED","AVOID"]))
+            
+            if cfg.SIMULATION_MODE:
+                buys = [r for r in results if r.get("verdict") in ["STRONG BUY", "BUY"]]
+                profits = []
+                for b in buys:
+                    if b.get("live_cmp") and b.get("cmp"):
+                        profits.append((b["live_cmp"] - b["cmp"]) / b["cmp"] * 100)
+                
+                avg_profit = sum(profits) / len(profits) if profits else 0
+                hit_rate = (sum(1 for p in profits if p > 0) / len(profits) * 100) if profits else 0
+                
+                sc6.metric("Avg. Profit (BUYS)", f"{avg_profit:+.1f}%")
+                sc7.metric("Hit Rate", f"{hit_rate:.0f}%")
 
             # Results Table
             sorted_show = sorted(show,
@@ -819,16 +851,34 @@ elif page == "🔍 Batch Scanner":
             table_data = []
             for r in sorted_show:
                 disc = r.get("discount")
-                table_data.append({
+                row = {
                     "Ticker"   : r.get("symbol",""),
                     "Name"     : (r.get("name") or "")[:30],
                     "CMP (₹)"  : r.get("cmp"),
+                }
+                
+                if cfg.SIMULATION_MODE:
+                    live_p = r.get("live_cmp")
+                    prof   = ((live_p - r["cmp"]) / r["cmp"] * 100) if live_p and r.get("cmp") else None
+                    row["Live (₹)"] = live_p
+                    row["Profit %"] = prof
+
+                # MOAT STARS
+                m_score = r.get("quality_result", {}).get("moat_score", 0)
+                row["Moat"] = "⭐" * m_score if m_score > 0 else "—"
+
+                # BUFFETT YIELD
+                b_yield = r.get("model_results", {}).get("Buffett", {}).get("earnings_yield")
+                row["Buffett Yield"] = b_yield
+
+                row.update({
                     "IV (₹)"   : r.get("iv"),
                     "Discount %": round(disc, 1) if disc is not None else None,
                     "Quality"  : r.get("quality",""),
                     "Type"     : r.get("type",""),
                     "Verdict"  : r.get("verdict",""),
                 })
+                table_data.append(row)
 
             df = pd.DataFrame(table_data)
 
@@ -848,13 +898,38 @@ elif page == "🔍 Batch Scanner":
                 if val >= 15:   return "background-color:#92D050"
                 if val >= 0:    return "background-color:#FFEB9C"
                 return "background-color:#FFC7CE"
+            
+            def color_profit(val):
+                if val is None: return ""
+                if val > 0: return "background-color:#C6EFCE;color:#006100"
+                if val < 0: return "background-color:#FFC7CE;color:#9C0006"
+                return ""
 
-            styled = (df.style
-                      .applymap(color_verdict,  subset=["Verdict"])
-                      .applymap(color_discount, subset=["Discount %"])
-                      .format({"CMP (₹)": "₹{:,.0f}", "IV (₹)": "₹{:,.0f}",
-                               "Discount %": "{:+.1f}%"},
-                              na_rep="N/A"))
+            def color_yield(val):
+                if val is None: return ""
+                gsec = (cfg.GSEC_10Y_YIELD * 100)
+                if val >= gsec + 2: return "background-color:#00B050;color:white"
+                if val >= gsec:     return "background-color:#92D050"
+                return "background-color:#FFC7CE"
+
+            styled = df.style.applymap(color_verdict,  subset=["Verdict"])
+            styled = styled.applymap(color_discount, subset=["Discount %"])
+            styled = styled.applymap(color_yield,    subset=["Buffett Yield"])
+            
+            if cfg.SIMULATION_MODE and "Profit %" in df.columns:
+                styled = styled.applymap(color_profit, subset=["Profit %"])
+
+            format_dict = {
+                "CMP (₹)": "₹{:,.0f}", 
+                "IV (₹)": "₹{:,.0f}",
+                "Discount %": "{:+.1f}%",
+                "Buffett Yield": "{:.1f}%"
+            }
+            if cfg.SIMULATION_MODE:
+                format_dict["Live (₹)"] = "₹{:,.0f}"
+                format_dict["Profit %"] = "{:+.1f}%"
+
+            styled = styled.format(format_dict, na_rep="N/A")
             st.dataframe(styled, use_container_width=True, hide_index=True, height=500)
 
             # Verdict distribution pie chart

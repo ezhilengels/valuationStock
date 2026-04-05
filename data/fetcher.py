@@ -194,6 +194,14 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
             data["cmp"] = float(sim_hist["Close"].iloc[-1]) if not sim_hist.empty else None
             if data["cmp"]:
                 print(f"  [SIM] CMP as of {SIM_END_DATE}: ₹{data['cmp']:,.2f}")
+            
+            # ALSO FETCH LIVE CMP FOR PROFIT CALCULATION (for simulation dashboard)
+            data["live_cmp"] = (
+                info.get("currentPrice")
+                or info.get("regularMarketPrice")
+                or _safe_fast(fast_info, "last_price")
+                or None
+            )
         except Exception:
             data["cmp"] = None
     else:

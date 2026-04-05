@@ -194,6 +194,152 @@ WATCHLISTS = {
         "ONGC", "OIL", "HAL", "BEL", "MAZDOCK", "ADANIGREEN", 
         "TATAPOWER", "ITC", "NESTLEIND", "MUTHOOTFIN", "SOLARINDS"
     ],
+
+    # ── 12 NEW SECTORAL BUCKETS ──────────────────────────────────────────────
+    "fmcg_staples": [
+        "HINDUNILVR", "ITC", "NESTLEIND", "BRITANNIA", "COLPAL", "DABUR",
+        "MARICO", "TATACONSUM", "GODREJCP", "VBL", "BALRAMCHIN"
+    ],
+
+    "realty_construction": [
+        "DLF", "GODREJPROP", "OBEROIRLTY", "PHOENIXLTD", "PRESTIGE",
+        "LODHA", "SOBHA", "BRIGADE", "SUNTECK"
+    ],
+
+    "media_entertainment": [
+        "ZEEL", "SUNTV", "PVRINOX", "NETWORK18", "TV18BRDCST",
+        "SAREGAMA", "NAZARA"
+    ],
+
+    "metals_mining": [
+        "TATASTEEL", "JSWSTEEL", "HINDALCO", "VEDL", "NATIONALUM",
+        "NMDC", "SAIL", "JINDALSTEL", "HINDZINC", "COALINDIA"
+    ],
+
+    "telecom_infrastructure": [
+        "BHARTIARTL", "INDUSTOWER", "IDEA", "TTML", "ROUTE", "TEJASNET"
+    ],
+
+    "consumer_durables": [
+        "HAVELLS", "VOLTAS", "BLUESTARCO", "CROMPTON", "DIXON",
+        "RELAXO", "BATAINDIA", "RAJESHEXPO", "TITAN", "AMBER"
+    ],
+
+    "hospitality_tourism": [
+        "INDHOTEL", "EIHOTEL", "CHALET", "LEMONTREE", "INDIGO",
+        "SPICEJET", "IRCTC", "EASEMYTRIP"
+    ],
+
+    "agro_fertilizers": [
+        "UPL", "PIIND", "COROMANDEL", "SUMICHEM", "BAYERCROP",
+        "GNFC", "CHAMBLFERT", "RALLIS"
+    ],
+
+    "logistics_shipping": [
+        "ADANIPORTS", "CONCOR", "DELHIVERY", "BLUEDART", "GESHIP",
+        "SCI", "GATEWAY"
+    ],
+
+    "defense_aerospace": [
+        "HAL", "BEL", "BDL", "MAZDOCK", "GRSE", "COCHINSHIP",
+        "DATA-PATTNS", "ZEN-TECH"
+    ],
+
+    "cement_building_mat": [
+        "ULTRACEMCO", "SHREECEM", "AMBUJACEM", "ACC", "JKCEMENT",
+        "RAMCOCEM", "DALBHARAT", "ASTRAL", "KAYNES"
+    ],
+
+    "insurance_amc": [
+        "LICI", "HDFCLIFE", "SBILIFE", "ICICIPRULI", "GICRE",
+        "NIACL", "HDFCAMC", "NAM-INDIA", "CAMS"
+    ],
+
+    # ── 10 DEEP-DIVE SECTORAL BUCKETS ───────────────────────────────────────
+    "specialty_chemicals": [
+        "DEEPAKNTR", "AARTIIND", "NAVINFLUOR", "VINATIORGA", "CLEAN", 
+        "ATUL", "FINEORG", "AMIORG"
+    ],
+
+    "bulk_chemicals_fertilizers": [
+        "TATACHEM", "GUJALKALI", "UPL", "CHAMBLFERT", "COROMANDEL", 
+        "GNFC", "GSFC"
+    ],
+
+    "rubber_tyres": [
+        "MRF", "APOLLOTYRE", "BALKRISIND", "CEATTD", "JKTYRE", 
+        "PIXTRANS", "APCOTEXIND"
+    ],
+
+    "synthetic_fibers": [
+        "GRASIM", "FILATEX", "SANGAMIND", "SARLAPOLY", "JBFIND", "MAYURUNIQ"
+    ],
+
+    "textiles_apparel": [
+        "PAGEIND", "KPRMILL", "VARDHMNTEC", "TRIDENT", "WELSPUNLIV", 
+        "ARVIND", "RAYMOND"
+    ],
+
+    "packaging_solutions": [
+        "EPL", "UFLEX", "AGI", "MOLDTKPAC", "TCPLPACK", "HUHTAMAKI", "POLYPLEX"
+    ],
+
+    "paper_forest_products": [
+        "JKPAPER", "WESTPCPAPER", "SESHAPAPER", "TNPL", "ORIENTPPR"
+    ],
+
+    "industrial_machinery": [
+        "CUMMINSIND", "KIRLOSENG", "THERMAX", "ELGIEQUIP", "TRIVENI", "KSB"
+    ],
+
+    "paints_coatings": [
+        "ASIANPAINT", "BERGEPAINT", "KANSAINER", "AKZOINDIA", 
+        "INDIGOPNTS", "PIDILITIND"
+    ],
+
+    "footwear_luxury": [
+        "RELAXO", "METROBRAND", "CAMPUS", "BATAINDIA", "KAYNES", "TITAN"
+    ],
+
+    # ── 8 HIGH-GROWTH / NICHE BUCKETS ───────────────────────────────────────
+    "railway_infra": [
+        "IRFC", "IRCTC", "RVNL", "IRCON", "RAILTEL", "RITES", 
+        "TITAGARH", "TEXRAIL"
+    ],
+
+    "renewable_green_energy": [
+        "ADANIGREEN", "SUZLON", "IREDA", "TATAPOWER", "NHPC", 
+        "SJVN", "KPIEL", "SWREL", "INOXWIND"
+    ],
+
+    "liquor_spirits": [
+        "UNITDSPR", "UBL", "RADICO", "SULA", "GLOBUSSPR", "TI", "SDBL"
+    ],
+
+    "sugar_ethanol": [
+        "EIDPARRY", "BALRAMCHIN", "TRIVENI", "RENUKA", "DALMIASUG", 
+        "DWARKESH", "BAJAJHIND", "PRAJIND"
+    ],
+
+    "new_age_tech": [
+        "ZOMATO", "PAYTM", "NYKAA", "POLICYBZR", "DELHIVERY", 
+        "MAPMYINDIA", "CARTRADE", "OLAELEC"
+    ],
+
+    "gems_jewelry": [
+        "TITAN", "KALYANKJIL", "SENCO", "RAJESHEXPO", 
+        "VAIBHAVGBL", "THANGAMAYL"
+    ],
+
+    "defence_advanced_v2": [
+        "HAL", "BEL", "BDL", "MAZDOCK", "GRSE", "COCHINSHIP", 
+        "DATA-PATTNS", "ZEN-TECH", "SOLARINDS", "MTARTECH"
+    ],
+
+    "agri_processing_rice": [
+        "LTFOODS", "KRBL", "ADANIWILMAR", "PATANJALI", 
+        "AVANTIFEED", "APOLSINHOT"
+    ],
 }
 
 
