@@ -15,6 +15,10 @@ pip install -r requirements.txt
 
 ## Option A — Terminal (Command Line)
 
+### dashborad open
+
+python3 -m streamlit run dashboard.py
+
 ### Single stock:
 ```
 python main.py INFY

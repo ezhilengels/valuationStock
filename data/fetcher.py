@@ -21,7 +21,26 @@ import os
 from typing import Union, List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import NSE_SUFFIX
+from config import NSE_SUFFIX, SIMULATION_MODE, SIMULATED_YEAR, SIMULATED_MONTH
+
+# ── Simulation date (computed once at import time) ────────────────────────────
+import calendar as _calendar
+import datetime as _datetime
+
+def _sim_end_date() -> str:
+    """Return last day of simulated month as 'YYYY-MM-DD', or None if live mode."""
+    if not SIMULATION_MODE:
+        return None
+    try:
+        y = int(SIMULATED_YEAR)
+        m = int(SIMULATED_MONTH)
+        last_day = _calendar.monthrange(y, m)[1]
+        return f"{y}-{m:02d}-{last_day}"
+    except Exception:
+        return None
+
+SIM_END_DATE = _sim_end_date()   # e.g. "2024-12-31" or None
+
 
 # ── Lazy imports for cache and screener (avoids circular import) ──────────────
 def _get_cache():
@@ -121,6 +140,18 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
         print(f"  [ERROR] Could not fetch data: {e}")
         return None
 
+    # ── V2 Simulation: strip future fiscal years from all 3 DataFrames ───────
+    # yfinance columns are fiscal year-end dates (e.g. 2025-03-31).
+    # In Dec 2024 those results didn't exist yet — filter them out so every
+    # downstream _extract_series() call sees only what the market knew then.
+    # When SIMULATION_MODE=false this block is skipped entirely.
+    if SIMULATION_MODE and SIM_END_DATE:
+        _sim_cutoff = pd.Timestamp(SIM_END_DATE)
+        financials  = _filter_df_cols(financials, _sim_cutoff)
+        balance     = _filter_df_cols(balance,    _sim_cutoff)
+        cashflow    = _filter_df_cols(cashflow,   _sim_cutoff)
+        print(f"  [SIM] Financial statements filtered to ≤ {SIM_END_DATE}")
+
     # Sanity check — if info is completely empty, yfinance silently failed
     if not info or info.get("symbol") is None and info.get("shortName") is None:
         print(f"  [ERROR] No data returned by yfinance for {full_symbol}. "
@@ -134,22 +165,45 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
     data["industry"]= info.get("industry", "Unknown")
 
     # ── PRICE ────────────────────────────────────────────────────────────────
-    data["cmp"] = (
-        info.get("currentPrice")
-        or info.get("regularMarketPrice")
-        or _safe_fast(fast_info, "last_price")
-        or None
-    )
+    if SIMULATION_MODE and SIM_END_DATE:
+        # V2 Simulation: fetch closing price as of the simulated month-end
+        try:
+            sim_hist = ticker.history(start="2000-01-01", end=SIM_END_DATE)
+            data["cmp"] = float(sim_hist["Close"].iloc[-1]) if not sim_hist.empty else None
+            if data["cmp"]:
+                print(f"  [SIM] CMP as of {SIM_END_DATE}: ₹{data['cmp']:,.2f}")
+        except Exception:
+            data["cmp"] = None
+    else:
+        # V1 live behaviour — untouched
+        data["cmp"] = (
+            info.get("currentPrice")
+            or info.get("regularMarketPrice")
+            or _safe_fast(fast_info, "last_price")
+            or None
+        )
 
     # ── SHARES & MARKET CAP ──────────────────────────────────────────────────
     data["shares_outstanding"] = (
         info.get("sharesOutstanding")
         or _safe_fast(fast_info, "shares")
     )
-    data["market_cap"] = info.get("marketCap", None)
+    # V2 Simulation: market_cap from info is always today's live value.
+    # When simulation is on, recompute from Dec 2024 CMP × shares so that
+    # EV, EV/EBITDA and EV/Sales all reflect the correct historical period.
+    # When SIMULATION_MODE=false the else branch runs — original line untouched.
+    if SIMULATION_MODE and SIM_END_DATE and data.get("cmp") and data.get("shares_outstanding"):
+        data["market_cap"] = data["cmp"] * data["shares_outstanding"]
+        print(f"  [SIM] market_cap recomputed: ₹{data['market_cap']/1e7:,.0f} Cr (Dec 2024)")
+    else:
+        data["market_cap"] = info.get("marketCap", None)
 
     # ── PER-SHARE METRICS ────────────────────────────────────────────────────
-    data["eps_ttm"]             = info.get("trailingEps", None)
+    # eps_ttm: under simulation, info.get("trailingEps") would return the
+    # current live value (includes post-Dec-2024 quarters).  We defer the
+    # assignment until after the net_profit_5y series is built, then
+    # compute it from filtered data.  Live path is completely unchanged.
+    data["eps_ttm"]             = info.get("trailingEps", None)   # may be overridden below (sim only)
     data["book_value_per_share"]= info.get("bookValue", None)
     data["dps"]                 = info.get("dividendRate", None)   # Annual DPS
     data["pe_ratio"]            = info.get("trailingPE", None)
@@ -192,9 +246,33 @@ def fetch_stock_data(symbol: str, use_cache: bool = True,
     data["net_profit_ttm"]   = _latest(data["net_profit_5y"])
     data["interest_exp_ttm"] = abs(_latest(data["interest_exp_5y"]) or 0)
 
+    # ── V2 Simulation: recompute EPS TTM from filtered financial data ─────────
+    # info.get("trailingEps") always reflects the current live trailing EPS.
+    # In simulation mode we replace it with latest annual net profit / shares
+    # so it matches what the market actually knew as of the simulated date.
+    # When SIMULATION_MODE=false the block is skipped and the live value stands.
+    if SIMULATION_MODE and SIM_END_DATE:
+        _np_latest = _latest(data.get("net_profit_5y", []))
+        _shares    = data.get("shares_outstanding")
+        if _np_latest and _shares and _shares > 0:
+            data["eps_ttm"] = _np_latest / _shares
+            print(f"  [SIM] EPS TTM recomputed from filtered data: ₹{data['eps_ttm']:.2f}")
+        else:
+            print("  [SIM] EPS TTM could not be recomputed — keeping live value as fallback")
+
     # ── HISTORICAL PRICE & DIVIDENDS ─────────────────────────────────────────
     try:
-        hist_5y = ticker.history(period="5y")
+        if SIMULATION_MODE and SIM_END_DATE:
+            # V2 Simulation: anchor 5Y window to simulated month-end
+            sim_end  = _datetime.datetime.strptime(SIM_END_DATE, "%Y-%m-%d")
+            sim_start = sim_end - _datetime.timedelta(days=5 * 365 + 2)
+            hist_5y = ticker.history(
+                start=sim_start.strftime("%Y-%m-%d"),
+                end=SIM_END_DATE
+            )
+        else:
+            # V1 live behaviour — untouched
+            hist_5y = ticker.history(period="5y")
         if not hist_5y.empty:
             # 5-year ago price (first available in 5y window)
             p_5y_ago = float(hist_5y["Close"].iloc[0])
@@ -346,6 +424,27 @@ def _enrich_from_screener(symbol: str, data: dict) -> dict:
 # =============================================================================
 # HELPERS
 # =============================================================================
+
+def _filter_df_cols(df: pd.DataFrame, cutoff: pd.Timestamp) -> pd.DataFrame:
+    """
+    Simulation helper — keep only columns (fiscal year-end dates) that fall
+    on or before the simulation cutoff date.
+
+    yfinance financials/balance/cashflow DataFrames use DatetimeIndex columns
+    (e.g. 2025-03-31, 2024-03-31 …).  Filtering them here means every
+    downstream _extract_series() call automatically sees only the data that
+    existed as of the simulated month — no changes needed anywhere else.
+
+    When SIMULATION_MODE=false this function is never called.
+    """
+    if df is None or df.empty:
+        return df
+    try:
+        valid_cols = [c for c in df.columns if pd.Timestamp(c) <= cutoff]
+        return df[valid_cols] if valid_cols else df
+    except Exception:
+        return df   # If timestamp parsing fails, return untouched
+
 
 def _safe_fast(fast_info, key: str):
     """Safely read from fast_info (which may be a dict or object)."""

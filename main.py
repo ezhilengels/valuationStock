@@ -204,14 +204,25 @@ def print_multi_summary(results: list):
 # =============================================================================
 
 def main():
-    # ── Fetch Live Macro Data ──────────────────────────────────────────────
+    # ── Fetch Macro Data (live or simulated) ──────────────────────────────
     from data.fetcher import fetch_gsec_yield
     import config as cfg
-    
-    live_yield = fetch_gsec_yield()
-    if live_yield:
-        cfg.GSEC_10Y_YIELD = live_yield
-        print(f"{Fore.YELLOW}  ℹ Live India 10Y G-Sec: {live_yield*100:.2f}%{Style.RESET_ALL}")
+
+    if cfg.SIMULATION_MODE:
+        # V2 Simulation: skip live G-Sec fetch; use a period-appropriate value.
+        # India 10Y G-Sec was ~6.75% in Dec 2024.  Kept as a constant here
+        # so no external call is needed during historical backtesting.
+        sim_gsec = 0.0675
+        cfg.GSEC_10Y_YIELD = sim_gsec
+        print(f"{Fore.MAGENTA}  [SIM] Simulation Mode ON"
+              f" — {cfg.SIMULATED_YEAR}/{cfg.SIMULATED_MONTH}"
+              f" | G-Sec: {sim_gsec*100:.2f}%{Style.RESET_ALL}")
+    else:
+        # V1 live behaviour — untouched
+        live_yield = fetch_gsec_yield()
+        if live_yield:
+            cfg.GSEC_10Y_YIELD = live_yield
+            print(f"{Fore.YELLOW}  ℹ Live India 10Y G-Sec: {live_yield*100:.2f}%{Style.RESET_ALL}")
 
     parser = argparse.ArgumentParser(
         description=(

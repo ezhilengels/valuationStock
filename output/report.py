@@ -36,8 +36,19 @@ def print_full_report(data: dict, detection: dict, quality: dict,
     verdict_color = VERDICT_COLORS.get(verdict, Fore.WHITE)
 
     # ── Header ─────────────────────────────────────────────────────────────
+    import config as cfg
+    date_str = ""
+    if cfg.SIMULATED_YEAR and cfg.SIMULATED_MONTH:
+        # Map number month to name if possible, or just use as is
+        from calendar import month_name
+        try:
+            m_name = month_name[int(cfg.SIMULATED_MONTH)]
+            date_str = f" | Period: {m_name} {cfg.SIMULATED_YEAR}"
+        except (ValueError, IndexError):
+            date_str = f" | Period: {cfg.SIMULATED_MONTH}/{cfg.SIMULATED_YEAR}"
+
     print(f"\n{Fore.CYAN}{SEP}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}  STOCK VALUATION REPORT{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}  STOCK VALUATION REPORT{date_str}{Style.RESET_ALL}")
     print(f"  {name}  ({symbol})")
     print(f"  Sector: {sector}  |  Stock Type: {detection.get('stock_type', 'N/A')}")
     if cmp:

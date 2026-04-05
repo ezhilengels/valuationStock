@@ -3,6 +3,22 @@
 # Stock Valuation Bot | valutionStock Project
 # =============================================================================
 
+import os
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass   # Dotenv not installed — proceed with environment variables
+
+# ── SIMULATION OVERRIDES (from .env or environment) ──────────────────────────
+SIMULATED_YEAR  = os.getenv("SIMULATED_YEAR")   # e.g., "2024"
+SIMULATED_MONTH = os.getenv("SIMULATED_MONTH")  # e.g., "12"
+
+# Master toggle — set SIMULATION_MODE=true in .env to enable historical testing
+# When false (default): bot uses live data exactly as before (V1 behaviour)
+# When true           : bot uses SIMULATED_YEAR / SIMULATED_MONTH for CMP + G-Sec
+SIMULATION_MODE = os.getenv("SIMULATION_MODE", "false").strip().lower() == "true"
+
 # ── DISCOUNT RATES (CAPM Based) ───────────────────────────────────────────────
 # Cost of Equity = Risk Free Rate + (Beta * Equity Risk Premium)
 def get_discount_rate(beta: float = 1.0) -> float:
